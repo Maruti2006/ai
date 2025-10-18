@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nyaya Mitra AI - India's AI Legal Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- GLOBAL STYLES & VARIABLES --- */
+        :root {
+            --primary-blue: #0a192f;
+            --secondary-blue: #172a45;
+            --gold-accent: #ffd700;
+            --light-slate: #ccd6f6;
+            --slate: #8892b0;
+            --white: #ffffff;
+            --shadow-color: rgba(2, 12, 27, 0.7);
+            --font-sans: 'Poppins', sans-serif;
+            --border-radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--primary-blue);
+            color: var(--light-slate);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 70% 20%, rgba(23, 42, 69, 0.9) 0%, transparent 50%),
+                radial-gradient(ellipse at 30% 80%, rgba(255, 215, 0, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 90% 90%, rgba(10, 25, 47, 0.8) 0%, transparent 40%);
+            background-color: var(--primary-blue);
+        }
+
+        h1, h2, h3 {
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--gold-accent);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        .content-section {
+            padding: 100px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* --- GRADIENT TEXT --- */
+        .gradient-text {
+            background: linear-gradient(90deg, var(--gold-accent), var(--light-slate));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .logo-ai {
+            background: linear-gradient(90deg, var(--gold-accent), #f9a825);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+
+        /* --- HEADER --- */
+        .sticky-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px 5%;
+            background: rgba(10, 25, 47, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            transition: top 0.3s;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .main-nav a {
+            color: var(--light-slate);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .main-nav a:hover {
+            color: var(--gold-accent);
+        }
+
+        .main-nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--gold-accent);
+            transition: width 0.3s;
+        }
+
+        .main-nav a:hover::after {
+            width: 100%;
+        }
+
+        /* --- HAMBURGER & MOBILE NAV --- */
+        .hamburger-menu {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        .hamburger-menu .bar {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin: 5px auto;
+            background-color: var(--white);
+            transition: all 0.3s ease-in-out;
+        }
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--primary-blue);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            z-index: 999;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        .mobile-nav.active {
+            transform: translateX(0);
+        }
+        .hamburger-menu.active .bar:nth-child(2) { opacity: 0; }
+        .hamburger-menu.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+        .hamburger-menu.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+        .mobile-nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 5%;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .main-headline {
+            margin-bottom: 20px;
+            line-height: 1.2;
+            background: linear-gradient(90deg, var(--white), var(--gold-accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--slate);
+            margin-bottom: 40px;
+        }
+
+        .cta-buttons button {
+            padding: 15px 30px;
+            margin: 0 10px;
+            border: 2px solid var(--gold-accent);
+            background: transparent;
+            color: var(--gold-accent);
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cta-buttons button:hover {
+            background: var(--gold-accent);
+            color: var(--primary-blue);
+            box-shadow: 0 0 20px var(--gold-accent);
+        }
+
+        /* --- GLASSMORPHISM CARD --- */
+        .glass-card {
+            background: rgba(23, 42, 69, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 var(--shadow-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 16px 40px 0 var(--shadow-color);
+        }
+
+        /* --- GUIDANCE HUB --- */
+        .guidance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .guidance-card {
+            text-align: center;
+        }
+        .guidance-card h3 {
+            color: var(--gold-accent);
+            margin-bottom: 15px;
+        }
+        .guidance-card p {
+            color: var(--slate);
+            margin-bottom: 20px;
+        }
+        .guidance-card button {
+            padding: 10px 20px;
+            border: 1px solid var(--gold-accent);
+            background: transparent;
+            color: var(--gold-accent);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .guidance-card button:hover {
+            background: var(--gold-accent);
+            color: var(--primary-blue);
+        }
+
+        /* --- DOCUMENT VERIFICATION --- */
+        .doc-verify-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .doc-verify-container p {
+            margin-bottom: 30px;
+            color: var(--slate);
+        }
+        #doc-upload-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: var(--gold-accent);
+            color: var(--primary-blue);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin-bottom: 20px;
+        }
+        #doc-upload-button:hover {
+            background-color: #ffc107;
+        }
+        .upload-status {
+            margin: 15px 0;
+            font-style: italic;
+            color: var(--slate);
+        }
+        .verification-results {
+            display: flex;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .result-card {
+            flex: 1;
+            text-align: left;
+        }
+        .result-card h3 {
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--gold-accent);
+            padding-bottom: 10px;
+        }
+        #openai-result, #gemini-result {
+            color: var(--light-slate);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* --- LEGAL AID TABLE --- */
+        .table-container {
+            overflow-x: auto;
+        }
+        #legal-aid-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+        #legal-aid-table th, #legal-aid-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        #legal-aid-table th {
+            background-color: var(--secondary-blue);
+            color: var(--gold-accent);
+        }
+        #legal-aid-table tbody tr:hover {
+            background-color: rgba(23, 42, 69, 0.8);
+        }
+
+        /* --- CONTACT CARD --- */
+        .contact-card {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(23, 42, 69, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: 0 8px 32px 0 var(--shadow-color);
+        }
+        .emergency-contacts h3 {
+            color: var(--gold-accent);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 50px 5%;
+            background-color: var(--secondary-blue);
+            text-align: center;
+        }
+        #user-reviews-container {
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+        .review-card {
+            background: var(--primary-blue);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            text-align: left;
+            border-left: 5px solid var(--gold-accent);
+        }
+        .review-card .rating {
+            color: var(--gold-accent);
+            margin-bottom: 10px;
+        }
+        .review-card .comment {
+            color: var(--slate);
+            font-style: italic;
+        }
+
+        /* --- MODALS --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: var(--primary-blue);
+            margin: auto;
+            padding: 40px;
+            border: 1px solid var(--gold-accent);
+            width: 90%;
+            max-width: 1000px;
+            border-radius: var(--border-radius);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .close-modal-btn {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        /* --- LEGAL RIGHTS MODAL STYLES --- */
+        .rights-filters {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        #rights-search-bar {
+            flex-grow: 1;
+            padding: 10px;
+            background: var(--secondary-blue);
+            border: 1px solid var(--slate);
+            color: var(--white);
+            border-radius: 5px;
+        }
+        .category-filters button {
+            padding: 8px 15px;
+            background: var(--secondary-blue);
+            border: 1px solid var(--slate);
+            color: var(--light-slate);
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        .category-filters button:hover, .category-filters button.active {
+            background: var(--gold-accent);
+            color: var(--primary-blue);
+            border-color: var(--gold-accent);
+        }
+        .rights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .right-card {
+            padding: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            background: var(--secondary-blue);
+        }
+        .right-card h4 { color: var(--gold-accent); }
+        .category-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            background: var(--gold-accent);
+            color: var(--primary-blue);
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+        .rating-stars { color: var(--gold-accent); }
+
+        /* --- GUIDANCE DETAIL MODAL --- */
+        #guidance-detail-content h3 { color: var(--gold-accent); margin-bottom: 20px; }
+        #guidance-detail-content ul { list-style: none; padding-left: 0; }
+        #guidance-detail-content li {
+            padding-left: 20px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+        #guidance-detail-content li::before {
+            content: '✓';
+            color: var(--gold-accent);
+            position: absolute;
+            left: 0;
+        }
+        #guidance-back-button {
+            margin-top: 30px;
+            padding: 10px 20px;
+            background: var(--gold-accent);
+            color: var(--primary-blue);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* --- CHATBOT STYLES --- */
+        #chatbot-toggle-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--gold-accent);
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            transition: transform 0.3s;
+        }
+        #chatbot-toggle-button:hover { transform: scale(1.1); }
+        #chatbot-toggle-button svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--primary-blue);
+        }
+
+        #chatbot-window {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 540px;
+            max-width: 90vw;
+            height: 720px;
+            max-height: 80vh;
+            background: var(--secondary-blue);
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 40px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transform-origin: bottom right;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+        #chatbot-window.hidden {
+            transform: scale(0);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .chatbot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--primary-blue);
+            border-top-left-radius: var(--border-radius);
+            border-top-right-radius: var(--border-radius);
+        }
+        .chatbot-header h3 { font-size: 1.1rem; }
+        #close-chatbot-btn {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        #language-selection-screen { padding: 20px; text-align: center; }
+        .language-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .language-buttons button {
+            padding: 12px;
+            background: var(--primary-blue);
+            color: var(--white);
+            border: 1px solid var(--slate);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .language-buttons button:hover {
+            background: var(--gold-accent);
+            color: var(--primary-blue);
+            border-color: var(--gold-accent);
+        }
+
+        #main-chat-screen.hidden { display: none; }
+        #main-chat-screen {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .chat-message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+        .chat-message.user {
+            background: var(--gold-accent);
+            color: var(--primary-blue);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-message.ai {
+            background: var(--primary-blue);
+            color: var(--light-slate);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .chat-message pre {
+            white-space: pre-wrap;
+            font-family: inherit;
+            font-size: inherit;
+        }
+        .copy-btn {
+            background: none; border: none; cursor: pointer;
+            color: var(--slate); font-size: 0.9rem; float: right;
+            opacity: 0.5; transition: opacity 0.3s;
+        }
+        .chat-message.ai:hover .copy-btn { opacity: 1; }
+
+        .chatbot-input-area {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid var(--slate);
+        }
+        #chatbot-input {
+            flex-grow: 1;
+            padding: 10px;
+            background: var(--primary-blue);
+            border: 1px solid var(--slate);
+            color: var(--white);
+            border-radius: 20px;
+            resize: none;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        .chatbot-input-area button {
+            background: none;
+            border: none;
+            color: var(--gold-accent);
+            cursor: pointer;
+            padding: 0 10px;
+            font-size: 1.5rem;
+        }
+        .chatbot-input-area button svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        .chatbot-toolbar {
+            padding: 10px 15px;
+            text-align: right;
+        }
+        .chatbot-toolbar button {
+            background: none;
+            border: none;
+            color: var(--slate);
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            padding: 0 20px;
+            margin-top: 10px;
+        }
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: var(--slate);
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        /* --- RESPONSIVENESS --- */
+        @media (max-width: 992px) {
+            .main-nav { display: none; }
+            .hamburger-menu { display: block; }
+            .mobile-nav { display: flex; }
+            .verification-results, .contact-card { flex-direction: column; }
+        }
+
+        @media (max-width: 768px) {
+            .guidance-grid { grid-template-columns: 1fr; }
+            .cta-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                align-items: center;
+            }
+            #chatbot-window {
+                bottom: 0;
+                right: 0;
+                width: 100%;
+                height: 100%;
+                max-width: 100%;
+                max-height: 100%;
+                border-radius: 0;
+            }
+            #chatbot-toggle-button {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+    </head>
+<body>
+
+    <header class="sticky-header">
+        <div class="header-container">
+            <div class="logo">Nyaya Mitra <span class="logo-ai">AI</span></div>
+            <nav class="main-nav">
+                <a href="#home">Home</a>
+                <a href="#legal-guidance">Legal Guidance</a>
+                <a href="#doc-verify">Doc Verify</a>
+                <a href="#free-legal-aid">Free Legal Aid</a>
+                <a href="#contact-us">Contact</a>
+            </nav>
+            <button class="hamburger-menu" id="hamburger-menu" aria-label="Open Menu">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </button>
+        </div>
+    </header>
+     <div class="mobile-nav" id="mobile-nav">
+        <a href="#home" class="mobile-nav-link">Home</a>
+        <a href="#" id="nav-legal-rights-link">Legal Rights</a>
+        <a href="#" id="nav-ai-chat-link">AI Legal Chat</a>
+        <a href="#legal-guidance" class="mobile-nav-link">Legal Guidance</a>
+        <a href="#doc-verify" class="mobile-nav-link">Document Verification</a>
+        <a href="#free-legal-aid" class="mobile-nav-link">Free Legal Aid</a>
+        <a href="#contact-us" class="mobile-nav-link">Contact Us</a>
+    </div>
+
+
+    <main>
+        <section id="home" class="hero-section">
+            <div class="hero-content">
+                <h1 class="main-headline">Nyaya Mitra AI: India's AI Legal Assistant</h1>
+                <p class="subtitle">Get instant, confidential, and accurate legal guidance. Understand your rights with the power of AI.</p>
+                <div class="cta-buttons">
+                    <button id="cta-ask-ai">Ask AI Now</button>
+                    <button id="cta-know-rights">Know Your Rights</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="legal-guidance" class="content-section">
+            <h2>Legal Guidance Hub</h2>
+            <div class="guidance-grid">
+                </div>
+        </section>
+
+        <section id="doc-verify" class="content-section">
+            <h2>AI-Powered Document Verification</h2>
+            <div class="doc-verify-container">
+                <p>Upload a legal document image (e.g., Aadhar, PAN, contract) for an authenticity analysis.</p>
+                <input type="file" id="doc-upload-input" accept="image/*" style="display: none;">
+                <button id="doc-upload-button">Upload Document</button>
+                <div id="upload-status" class="upload-status"></div>
+                <div class="verification-results">
+                    <div class="result-card" id="openai-result-container">
+                        <h3>OpenAI Vision Result</h3>
+                        <div id="openai-result">Awaiting document upload...</div>
+                    </div>
+                    <div class="result-card" id="gemini-result-container">
+                        <h3>Gemini Vision Result</h3>
+                        <div id="gemini-result">Awaiting document upload...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="free-legal-aid" class="content-section">
+            <h2>Free Legal Aid (Karnataka)</h2>
+            <p>Contact information for District Legal Services Authorities in Karnataka.</p>
+            <div class="table-container">
+                <table id="legal-aid-table">
+                    <thead>
+                        <tr>
+                            <th>District</th>
+                            <th>Phone Number</th>
+                            <th>Mobile Number</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="contact-us" class="content-section">
+             <h2>Contact & Emergency</h2>
+            <div class="contact-card">
+                <div class="contact-info">
+                    <p><strong>Support Email:</strong> support@nyayamitra.ai</p>
+                    <p><strong>Location:</strong> Karnataka, India</p>
+                </div>
+                <div class="emergency-contacts">
+                    <h3>Emergency Numbers</h3>
+                    <p><strong>Police:</strong> 100</p>
+                    <p><strong>Legal Aid Helpline:</strong> 15100</p>
+                    <p><strong>Women Helpline:</strong> 181</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <h3>User Reviews</h3>
+            <div id="user-reviews-container">
+                <p>Be the First to Review</p>
+            </div>
+            <p>&copy; 2025 Nyaya Mitra AI. All Rights Reserved.</p>
+        </div>
+    </footer>
+    
+    <div id="legal-rights-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal-btn" id="close-rights-modal">&times;</button>
+            <h2>Know Your Essential Legal Rights</h2>
+            <div class="rights-filters">
+                <input type="text" id="rights-search-bar" placeholder="Search rights by name...">
+                <div id="rights-category-filters" class="category-filters">
+                    </div>
+            </div>
+            <div id="legal-rights-grid" class="rights-grid">
+                </div>
+        </div>
+    </div>
+
+    <div id="guidance-detail-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal-btn" id="close-guidance-modal">&times;</button>
+            <div id="guidance-detail-content"></div>
+            <button id="guidance-back-button">Back to Hub</button>
+        </div>
+    </div>
+
+
+    <div id="chatbot-container">
+        <button id="chatbot-toggle-button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 5.589 2 10c0 2.908 1.897 5.516 4.743 6.918-.284.526-.52.98-.701 1.379-.694 1.512-1.042 3.102-.923 4.542.023.283.276.5.568.5h12.625c.292 0 .545-.217.568-.5.119-1.44-.229-3.03-.923-4.542-.18-.399-.417-.853-.701-1.379C20.103 15.516 22 12.908 22 10c0-4.411-4.486-8-10-8zm0 2c4.411 0 8 2.691 8 6s-3.589 6-8 6-8-2.691-8-6 3.589-6 8-6zm-5 5c-1.103 0-2 .897-2 2s.897 2 2 2 2-.897 2-2-.897-2-2-2zm10 0c-1.103 0-2 .897-2 2s.897 2 2 2 2-.897 2-2-.897-2-2-2z"></path></svg>
+        </button>
+        <div id="chatbot-window" class="hidden">
+            <div class="chatbot-header">
+                <h3>Nyaya Mitra AI Chat</h3>
+                <button id="close-chatbot-btn">&times;</button>
+            </div>
+            <div id="language-selection-screen">
+                <h4>Select Your Language</h4>
+                <div id="language-buttons" class="language-buttons">
+                    </div>
+            </div>
+            <div id="main-chat-screen" class="hidden">
+                <div id="chat-messages" class="chat-messages"></div>
+                <div id="typing-indicator" class="typing-indicator hidden">
+                    <span></span><span></span><span></span>
+                </div>
+                <div class="chatbot-input-area">
+                    <textarea id="chatbot-input" placeholder="Ask your legal question..." rows="1"></textarea>
+                    <button id="chatbot-send-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                    </button>
+                    <button id="chatbot-mic-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85l-.1 1.15c0 3.01-2.46 5.42-5.5 5.91V21h-2v-2.09c-3.04-.49-5.5-2.9-5.5-5.91l-.1-1.15c-.08-.49-.49-.85-.98-.85-.55 0-1 .45-1 1s.45 1 1 1c.04 0 .09.01.13.02l.1 1.15C3.39 18.01 5.92 21 9.5 21v1c0 .55.45 1 1 1s1-.45 1-1v-1h1v1c0 .55.45 1 1 1s1-.45 1-1v-1c3.58 0 6.11-2.99 6.27-6.68l.1-1.15c.04-.01.09-.02.13-.02.55 0 1-.45 1-1s-.45-1-1-1z"></path></svg>
+                    </button>
+                </div>
+                 <div class="chatbot-toolbar">
+                    <button id="clear-chat-btn">Clear Chat</button>
+                    <button id="change-lang-btn">Change Language</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- API KEYS & CONFIGURATION ---
+        // IMPORTANT: Replace these with your actual keys and cloud name.
+        
+        
+        // --- ELEMENT SELECTORS ---
+        const hamburgerMenu = document.getElementById('hamburger-menu');
+        const mobileNav = document.getElementById('mobile-nav');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+        const ctaKnowRights = document.getElementById('cta-know-rights');
+        const legalRightsModal = document.getElementById('legal-rights-modal');
+        const closeRightsModal = document.getElementById('close-rights-modal');
+        const guidanceGrid = document.querySelector('.guidance-grid');
+        const guidanceDetailModal = document.getElementById('guidance-detail-modal');
+        const closeGuidanceModal = document.getElementById('close-guidance-modal');
+        const guidanceDetailContent = document.getElementById('guidance-detail-content');
+        const guidanceBackButton = document.getElementById('guidance-back-button');
+
+        const docUploadButton = document.getElementById('doc-upload-button');
+        const docUploadInput = document.getElementById('doc-upload-input');
+        const uploadStatus = document.getElementById('upload-status');
+        const openaiResultEl = document.getElementById('openai-result');
+        const geminiResultEl = document.getElementById('gemini-result');
+
+        // Chatbot elements
+        const chatbotToggleButton = document.getElementById('chatbot-toggle-button');
+        const chatbotWindow = document.getElementById('chatbot-window');
+        const closeChatbotBtn = document.getElementById('close-chatbot-btn');
+        const ctaAskAi = document.getElementById('cta-ask-ai');
+        const navAiChatLink = document.getElementById('nav-ai-chat-link');
+        const languageSelectionScreen = document.getElementById('language-selection-screen');
+        const mainChatScreen = document.getElementById('main-chat-screen');
+        const languageButtonsContainer = document.getElementById('language-buttons');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatbotInput = document.getElementById('chatbot-input');
+        const chatbotSendBtn = document.getElementById('chatbot-send-btn');
+        const clearChatBtn = document.getElementById('clear-chat-btn');
+        const changeLangBtn = document.getElementById('change-lang-btn');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        // --- STATE MANAGEMENT ---
+        let chatHistory = JSON.parse(localStorage.getItem('nyayaMitraChatHistory')) || [];
+        let userLanguage = localStorage.getItem('nyayaMitraLanguage') || null;
+        let userReviews = JSON.parse(localStorage.getItem('nyayaMitraReviews')) || [];
+
+        // --- DATA ---
+        const languages = [
+            { code: 'en', name: 'English' }, { code: 'hi', name: 'हिन्दी' },
+            { code: 'ta', name: 'தமிழ்' }, { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' }, { code: 'mr', name: 'मराठी' },
+            { code: 'bn', name: 'বাংলা' }, { code: 'gu', name: 'ગુજરાતી' },
+            { code: 'ml', name: 'മലയാളം' }, { code: 'pa', name: 'ਪੰਜਾਬੀ' },
+            { code: 'or', name: 'ଓଡ଼ିଆ' }
+        ];
+
+        const legalRightsData = [
+            { id: 1, name: 'Right to Equality', category: 'Constitutional', rating: 4.8, description: 'Ensures equal treatment before the law and prohibits discrimination on grounds of religion, race, caste, sex or place of birth (Article 14).' },
+            { id: 2, name: 'Right to Freedom of Speech', category: 'Constitutional', rating: 4.9, description: 'Guarantees freedom of speech and expression, assembly, association, movement, residence, and profession (Article 19).' },
+            { id: 3, name: 'Right to Life and Personal Liberty', category: 'Constitutional', rating: 5.0, description: 'No person shall be deprived of his life or personal liberty except according to procedure established by law (Article 21).' },
+            { id: 4, name: 'Right Against Exploitation', category: 'Constitutional', rating: 4.7, description: 'Prohibits all forms of forced labour, child labour and trafficking of human beings (Articles 23-24).' },
+            { id: 5, name: 'Right to Information (RTI)', category: 'Procedural', rating: 4.6, description: 'Empowers every citizen to seek any information from the government, inspect any government documents and seek certified photocopies thereof.' },
+            { id: 6, name: 'Right to be produced before a Magistrate', category: 'Criminal', rating: 4.8, description: 'An arrested person must be produced before the nearest magistrate within 24 hours of arrest (Section 57, CrPC).' },
+            { id: 7, name: 'Right to Free Legal Aid', category: 'Constitutional', rating: 4.9, description: 'If an accused cannot afford a lawyer, they have the right to get one provided by the state (Article 39-A).' },
+            { id: 8, name: 'Right of Private Defence', category: 'Criminal', rating: 4.5, description: 'Allows a person to use reasonable force to defend their life and property from harm (Sections 96-106, IPC).' },
+            { id: 9, name: 'Right to claim maintenance', category: 'Family', rating: 4.4, description: 'A wife, child, or parent unable to maintain themselves has the right to claim maintenance from the husband, father, or son respectively (Section 125, CrPC).' },
+            { id: 10, name: 'Right to not be a witness against self', category: 'Criminal', rating: 4.7, description: 'An accused person cannot be compelled to be a witness against himself (Article 20(3)).' },
+            // ... Add more rights to reach 30
+        ];
+
+        const guidanceData = [
+            { title: 'Constitutional Law', description: 'Fundamental rights, directive principles, and the framework of the Indian government.', details: '<h3>Details on Constitutional Law</h3><ul><li>Preamble: The soul of the Constitution.</li><li>Fundamental Rights (Part III): Articles 12-35, including equality, freedom, and life.</li><li>Directive Principles (Part IV): Guidelines for the state to create a just society.</li><li>Separation of Powers: Legislative, Executive, and Judiciary branches.</li><li>Landmark Judgments: Kesavananda Bharati case on basic structure doctrine.</li></ul>'},
+            { title: 'Criminal Law', description: 'Defines crimes and prescribes punishments under the Indian Penal Code (IPC) and CrPC.', details: '<h3>Details on Criminal Law</h3><ul><li>Indian Penal Code, 1860 (IPC): Defines various offences like theft, murder, assault.</li><li>Code of Criminal Procedure, 1973 (CrPC): Lays down the procedure for criminal trials.</li><li>Types of Offences: Cognizable vs. Non-cognizable, Bailable vs. Non-bailable.</li><li>Key Concepts: FIR (First Information Report), Arrest, Bail, Trial process.</li><li>Evidence Act, 1872: Governs the admissibility of evidence in court.</li></ul>'},
+            { title: 'Civil Matters', description: 'Disputes between individuals or organizations, covering contracts, property, and torts.', details: '<h3>Details on Civil Matters</h3><ul><li>Code of Civil Procedure, 1908 (CPC): Governs the procedure in civil courts.</li><li>Law of Contracts: Governs agreements and their enforcement.</li><li>Property Law: Deals with ownership, transfer, and disputes related to property.</li><li>Law of Torts: Deals with civil wrongs that cause harm or loss.</li><li>Stages of a Civil Suit: Plaint, Written Statement, Framing of Issues, Evidence, Judgment.</li></ul>'},
+            { title: 'Family Law', description: 'Governs personal matters like marriage, divorce, adoption, and inheritance.', details: '<h3>Details on Family Law</h3><ul><li>Personal Laws: Governed by religious laws (Hindu, Muslim, Christian, Parsi).</li><li>Marriage Acts: Hindu Marriage Act, 1955; Special Marriage Act, 1954.</li><li>Divorce: Grounds for divorce, mutual consent, and contested divorce.</li><li>Maintenance & Alimony: Financial support during and after divorce.</li><li>Child Custody: Legal and physical custody arrangements.</li></ul>'},
+            { title: 'Corporate Law', description: 'Rules and regulations governing the formation and operation of companies.', details: '<h3>Details on Corporate Law</h3><ul><li>Companies Act, 2013: Primary legislation for companies in India.</li><li>Types of Companies: Private Limited, Public Limited, One Person Company (OPC).</li><li>SEBI Regulations: Rules for listed companies and securities market.</li><li>Insolvency and Bankruptcy Code (IBC), 2016: For resolving corporate insolvency.</li><li>Corporate Governance: Rules for ethical and transparent company management.</li></ul>'},
+            { title: 'Legal Education', description: 'Resources and information for aspiring law students and professionals.', details: '<h3>Details on Legal Education</h3><ul><li>Law Degrees: 3-year LLB and 5-year integrated LLB programs.</li><li>Entrance Exams: CLAT (Common Law Admission Test), AILET, LSAT.</li><li>Top Law Schools: National Law Schools (NLUs), and other prominent universities.</li><li>Career Paths: Litigation, Corporate Counsel, Judiciary, Civil Services, Academia.</li><li>Continuing Legal Education: Essential for staying updated with legal developments.</li></ul>'},
+        ];
+
+        const legalAidData = [
+            { district: 'Bagalkot', phone: '08354-221105', mobile: '9482164805', email: 'bagalkotdlsa@gmail.com' },
+            { district: 'Bengaluru Rural', phone: '080-29760775', mobile: '8762908122', email: 'bngruraldlsa@gmail.com' },
+            { district: 'Bengaluru Urban', phone: '080-22341852', mobile: '9164645151', email: 'dlsablru@gmail.com' },
+            { district: 'Belagavi', phone: '0831-2464790', mobile: '9448986878', email: 'dlsabelgaum@gmail.com' },
+            { district: 'Ballari', phone: '08392-273615', mobile: '9448993510', email: 'dlsabellary@gmail.com' },
+            { district: 'Bidar', phone: '08482-227035', mobile: '8105072007', email: 'dlsabidar@gmail.com' },
+            // ...Add more districts as needed
+        ];
+
+        // --- INITIALIZATION ---
+        const init = () => {
+            // Navigation
+            setupNavigation();
+            
+            // Populate dynamic content
+            populateGuidanceGrid();
+            populateLegalAidTable();
+            populateLanguageButtons();
+            renderReviews();
+
+            // Chatbot initialization
+            setupChatbot();
+            if (userLanguage) {
+                showMainChat();
+                loadChatHistory();
+            } else {
+                showLanguageSelection();
+            }
+        };
+
+        // --- NAVIGATION & MODAL LOGIC ---
+        const setupNavigation = () => {
+            hamburgerMenu.addEventListener('click', () => {
+                hamburgerMenu.classList.toggle('active');
+                mobileNav.classList.toggle('active');
+            });
+
+            mobileNavLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburgerMenu.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                });
+            });
+
+            ctaKnowRights.addEventListener('click', () => openModal(legalRightsModal));
+            document.getElementById('nav-legal-rights-link').addEventListener('click', (e) => {
+                 e.preventDefault();
+                 hamburgerMenu.classList.remove('active');
+                 mobileNav.classList.remove('active');
+                 openModal(legalRightsModal);
+            });
+            closeRightsModal.addEventListener('click', () => closeModal(legalRightsModal));
+            
+            guidanceBackButton.addEventListener('click', () => closeModal(guidanceDetailModal));
+            closeGuidanceModal.addEventListener('click', () => closeModal(guidanceDetailModal));
+
+            // Close modal on outside click
+            window.addEventListener('click', (e) => {
+                if (e.target === legalRightsModal) closeModal(legalRightsModal);
+                if (e.target === guidanceDetailModal) closeModal(guidanceDetailModal);
+            });
+        };
+        
+        const openModal = (modal) => modal.classList.add('active');
+        const closeModal = (modal) => modal.classList.remove('active');
+
+        // --- DYNAMIC CONTENT POPULATION ---
+        const populateGuidanceGrid = () => {
+            guidanceGrid.innerHTML = guidanceData.map((item, index) => `
+                <div class="guidance-card glass-card" data-index="${index}">
+                    <h3>${item.title}</h3>
+                    <p>${item.description}</p>
+                    <button class="explore-more-btn">Explore More</button>
+                </div>
+            `).join('');
+            
+            document.querySelectorAll('.explore-more-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const card = e.target.closest('.guidance-card');
+                    const index = card.dataset.index;
+                    const data = guidanceData[index];
+                    guidanceDetailContent.innerHTML = data.details;
+                    openModal(guidanceDetailModal);
+                });
+            });
+        };
+        
+        const populateLegalAidTable = () => {
+            const tableBody = document.getElementById('legal-aid-table').querySelector('tbody');
+            tableBody.innerHTML = legalAidData.map(item => `
+                <tr>
+                    <td>${item.district}</td>
+                    <td>${item.phone}</td>
+                    <td>${item.mobile}</td>
+                    <td>${item.email}</td>
+                </tr>
+            `).join('');
+        };
+
+        const populateLegalRights = (rights) => {
+            const grid = document.getElementById('legal-rights-grid');
+            grid.innerHTML = rights.map(right => `
+                <div class="right-card glass-card" data-category="${right.category.toLowerCase()}">
+                    <h4>${right.name}</h4>
+                    <span class="category-badge">${right.category}</span>
+                    <p class="rating-stars">${'★'.repeat(Math.round(right.rating))}${'☆'.repeat(5 - Math.round(right.rating))} (${right.rating}/5)</p>
+                    <p>${right.description}</p>
+                </div>
+            `).join('');
+        };
+        
+        const setupLegalRightsFilter = () => {
+            const searchBar = document.getElementById('rights-search-bar');
+            const categoryContainer = document.getElementById('rights-category-filters');
+            
+            const categories = ['All', ...new Set(legalRightsData.map(r => r.category))];
+            categoryContainer.innerHTML = categories.map(cat => `<button data-category="${cat.toLowerCase()}">${cat}</button>`).join('');
+            
+            const filterButtons = categoryContainer.querySelectorAll('button');
+            filterButtons[0].classList.add('active');
+
+            const filterRights = () => {
+                const searchTerm = searchBar.value.toLowerCase();
+                const activeCategory = categoryContainer.querySelector('.active').dataset.category;
+
+                const filtered = legalRightsData.filter(right => {
+                    const matchesSearch = right.name.toLowerCase().includes(searchTerm) || right.description.toLowerCase().includes(searchTerm);
+                    const matchesCategory = activeCategory === 'all' || right.category.toLowerCase() === activeCategory;
+                    return matchesSearch && matchesCategory;
+                });
+                populateLegalRights(filtered);
+            };
+
+            searchBar.addEventListener('input', filterRights);
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    filterRights();
+                });
+            });
+        };
+        
+        ctaKnowRights.addEventListener('click', () => {
+            populateLegalRights(legalRightsData);
+            setupLegalRightsFilter();
+            openModal(legalRightsModal);
+        });
+        
+        // --- DOCUMENT VERIFICATION LOGIC ---
+        docUploadButton.addEventListener('click', () => docUploadInput.click());
+        docUploadInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            uploadStatus.textContent = 'Uploading document...';
+            openaiResultEl.textContent = 'Analyzing...';
+            geminiResultEl.textContent = 'Analyzing...';
+
+            try {
+                const secureUrl = await uploadToCloudinary(file);
+                uploadStatus.textContent = 'Upload complete. Analyzing with AI...';
+
+                Promise.all([
+                    analyzeWithOpenAI(secureUrl),
+                    analyzeWithGemini(secureUrl)
+                ]);
+
+            } catch (error) {
+                console.error('Upload Error:', error);
+                uploadStatus.textContent = 'Error during upload. Please try again.';
+                openaiResultEl.textContent = 'Analysis failed.';
+                geminiResultEl.textContent = 'Analysis failed.';
+            }
+        });
+
+        const uploadToCloudinary = (file) => {
+            return new Promise((resolve, reject) => {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+                fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.secure_url) {
+                        resolve(data.secure_url);
+                    } else {
+                        reject(data.error || 'Cloudinary upload failed');
+                    }
+                })
+                .catch(error => reject(error));
+            });
+        };
+
+        const analyzeWithOpenAI = async (imageUrl) => {
+            const prompt = "Analyze this document image. Assess its authenticity based on layout, typography, stamps, signatures, and other official markers. Return a JSON object with 'is_authentic' (boolean), 'confidence_score' (0-100), and 'reasoning' (a brief explanation).";
+            
+            try {
+                const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${OPENAI_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4-vision-preview",
+                        messages: [{
+                            role: "user",
+                            content: [
+                                { type: "text", text: prompt },
+                                { type: "image_url", image_url: { url: imageUrl } }
+                            ]
+                        }],
+                        max_tokens: 300
+                    })
+                });
+
+                if (!response.ok) throw new Error(`OpenAI API Error: ${response.statusText}`);
+                
+                const data = await response.json();
+                const content = data.choices[0].message.content;
+                
+                try {
+                    const result = JSON.parse(content.replace(/```json|```/g, '').trim());
+                    openaiResultEl.innerHTML = `
+                        <p><strong>Authentic:</strong> ${result.is_authentic}</p>
+                        <p><strong>Confidence:</strong> ${result.confidence_score}%</p>
+                        <p><strong>Reasoning:</strong> ${result.reasoning}</p>
+                    `;
+                } catch {
+                     openaiResultEl.textContent = content;
+                }
+                uploadStatus.textContent = 'Analysis complete.';
+
+            } catch (error) {
+                console.error('OpenAI Vision Error:', error);
+                openaiResultEl.textContent = `Error: ${error.message}`;
+            }
+        };
+
+        const analyzeWithGemini = async (imageUrl) => {
+            const prompt = "Analyze this document image. Assess its authenticity based on layout, typography, stamps, signatures, and other official markers. Return a JSON object with 'is_authentic' (boolean), 'confidence_score' (0-100), and 'reasoning' (a brief explanation).";
+            
+            try {
+                 const base64ImageData = await fetch(imageUrl)
+                    .then(res => res.blob())
+                    .then(blob => new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(blob);
+                    }));
+
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [
+                                { text: prompt },
+                                { inline_data: { mime_type: "image/jpeg", data: base64ImageData } }
+                            ]
+                        }]
+                    })
+                });
+                
+                if (!response.ok) throw new Error(`Gemini API Error: ${response.statusText}`);
+
+                const data = await response.json();
+                const content = data.candidates[0].content.parts[0].text;
+                
+                 try {
+                    const result = JSON.parse(content.replace(/```json|```/g, '').trim());
+                    geminiResultEl.innerHTML = `
+                        <p><strong>Authentic:</strong> ${result.is_authentic}</p>
+                        <p><strong>Confidence:</strong> ${result.confidence_score}%</p>
+                        <p><strong>Reasoning:</strong> ${result.reasoning}</p>
+                    `;
+                } catch {
+                     geminiResultEl.textContent = content;
+                }
+
+            } catch (error) {
+                console.error('Gemini Vision Error:', error);
+                geminiResultEl.textContent = `Error: ${error.message}`;
+            }
+        };
+
+
+        // --- CHATBOT LOGIC ---
+        const setupChatbot = () => {
+            const toggleChatbot = () => chatbotWindow.classList.toggle('hidden');
+            chatbotToggleButton.addEventListener('click', toggleChatbot);
+            closeChatbotBtn.addEventListener('click', toggleChatbot);
+            ctaAskAi.addEventListener('click', () => {
+                chatbotWindow.classList.remove('hidden');
+            });
+            navAiChatLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                hamburgerMenu.classList.remove('active');
+                mobileNav.classList.remove('active');
+                chatbotWindow.classList.remove('hidden');
+            });
+
+            chatbotSendBtn.addEventListener('click', sendMessage);
+            chatbotInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            clearChatBtn.addEventListener('click', clearChat);
+            changeLangBtn.addEventListener('click', () => {
+                userLanguage = null;
+                localStorage.removeItem('nyayaMitraLanguage');
+                showLanguageSelection();
+            });
+        };
+
+        const populateLanguageButtons = () => {
+            languageButtonsContainer.innerHTML = languages.map(lang => 
+                `<button data-lang="${lang.code}">${lang.name}</button>`
+            ).join('');
+
+            languageButtonsContainer.querySelectorAll('button').forEach(button => {
+                button.addEventListener('click', () => {
+                    userLanguage = button.dataset.lang;
+                    localStorage.setItem('nyayaMitraLanguage', userLanguage);
+                    showMainChat();
+                });
+            });
+        };
+
+        const showLanguageSelection = () => {
+            languageSelectionScreen.classList.remove('hidden');
+            mainChatScreen.classList.add('hidden');
+        };
+
+        const showMainChat = () => {
+            languageSelectionScreen.classList.add('hidden');
+            mainChatScreen.classList.remove('hidden');
+        };
+        
+        const loadChatHistory = () => {
+            chatMessages.innerHTML = '';
+            chatHistory.forEach(msg => addMessageToUI(msg.role, msg.content));
+            scrollToBottom();
+        };
+
+        const sendMessage = () => {
+            const message = chatbotInput.value.trim();
+            if (!message) return;
+
+            addMessageToHistory('user', message);
+            addMessageToUI('user', message);
+            
+            getAIResponse();
+        };
+
+        const addMessageToHistory = (role, content) => {
+            chatHistory.push({ role, content });
+            localStorage.setItem('nyayaMitraChatHistory', JSON.stringify(chatHistory));
+        };
+
+        const addMessageToUI = (role, content, withFeedback = false) => {
+            const messageEl = document.createElement('div');
+            messageEl.classList.add('chat-message', role);
+            
+            const pre = document.createElement('pre');
+            pre.textContent = content;
+            messageEl.appendChild(pre);
+
+            if (role === 'ai') {
+                const copyBtn = document.createElement('button');
+                copyBtn.innerHTML = '📋';
+                copyBtn.className = 'copy-btn';
+                copyBtn.title = 'Copy to clipboard';
+                copyBtn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(content).then(() => {
+                        copyBtn.textContent = '✅';
+                        setTimeout(() => copyBtn.textContent = '📋', 2000);
+                    });
+                });
+                messageEl.appendChild(copyBtn);
+            }
+            
+            chatMessages.appendChild(messageEl);
+            scrollToBottom();
+        };
+
+        const getAIResponse = async () => {
+            typingIndicator.classList.remove('hidden');
+            
+            const systemPrompt = `You are "Nyaya Mitra AI," an expert Indian legal intelligence system. Your responses must be precise, neutral, and structured, referencing Indian statutes, constitutional articles, and judicial precedents. Always respond in the language with code '${userLanguage}'.
+            Mandatory Response Format:
+            1. At-a-Glance Summary
+             * Provide 3-5 crucial bullet points summarizing the legal position.
+             * Include key sections (e.g., Section 420, IPC), applicable acts, potential penalties, and immediate implications (e.g., Bailable/Non-Bailable).
+            2. Detailed Legal Analysis
+             * Applicable Laws & Provisions: Cite specific acts and sections (e.g., Section 378, Indian Penal Code, 1860).
+             * Legal Interpretation & Precedents: Explain court interpretations and cite landmark judgments (e.g., Kesavananda Bharati v. State of Kerala (1973)).
+             * Penalties & Jail Terms: Detail the punishment, fines, and nature of the offense (e.g., Cognizable, Non-Compoundable).
+            3. Recommended Legal Steps
+             * Provide a clear, actionable roadmap for the user.
+             * Examples: Steps for filing an FIR, documentation required, available legal remedies, or preventive actions.`;
+            
+            const messagesForAPI = [
+                { role: 'system', content: systemPrompt },
+                ...chatHistory
+            ];
+
+            try {
+                const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${OPENAI_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4-turbo",
+                        messages: messagesForAPI
+                    })
+                });
+
+                if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+                
+                const data = await response.json();
+                const aiMessage = data.choices[0].message.content;
+
+                addMessageToHistory('assistant', aiMessage);
+                addMessageToUI('ai', aiMessage, true);
+
+            } catch (error) {
+                console.error('AI Response Error:', error);
+                addMessageToUI('ai', 'Sorry, I encountered an error. Please try again.');
+            } finally {
+                typingIndicator.classList.add('hidden');
+            }
+        };
+        
+        const clearChat = () => {
+            chatHistory = [];
+            localStorage.removeItem('nyayaMitraChatHistory');
+            chatMessages.innerHTML = '';
+        };
+
+        const scrollToBottom = () => {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        };
+        
+        const renderReviews = () => {
+            const container = document.getElementById('user-reviews-container');
+            if (userReviews.length === 0) {
+                container.innerHTML = '<p>Be the First to Review</p>';
+                return;
+            }
+            container.innerHTML = userReviews.map(review => `
+                <div class="review-card">
+                    <p class="rating">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</p>
+                    ${review.comment ? `<p class="comment">"${review.comment}"</p>` : ''}
+                </div>
+            `).join('');
+        };
+
+        // --- START THE APP ---
+        init();
+
+    </script>
+    </body>
+</html>
